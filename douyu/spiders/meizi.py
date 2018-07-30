@@ -2,6 +2,7 @@
 import scrapy
 from douyu.items import DouyuItem
 import hashlib
+import re
 
 class MeiziSpider(scrapy.Spider):
     name = 'meizi'
@@ -9,7 +10,6 @@ class MeiziSpider(scrapy.Spider):
     start_urls = ['http://mmjpg.com/']
 
     # url = 'http://www.mmjpg.com/mm/1421/'
-    page = 1
 
     def parse(self, response):
 
@@ -32,12 +32,11 @@ class MeiziSpider(scrapy.Spider):
         items['name'] = title
         items['image_urls'] = imagelink
         items['referer'] = response.url
-        items['page'] = self.page
-        if response.url.count('/') == 5:
-            self.page +=1
+        page = re.findall(r"mm/(\d+)", response.url)[0]
+        items['page'] = page
 
-        hash_md5 = hashlib.md5(title.encode('utf-8'))
-        items['folder_name'] = str(self.page) + '/' + hash_md5.hexdigest()[-5:]
+        hash_md5 = hashlib.md5(imagelink.encode('utf-8'))
+        items['folder_name'] = str(page) + '/' + hash_md5.hexdigest()[-5:]
 
         yield items
 

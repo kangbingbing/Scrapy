@@ -8,6 +8,7 @@ import scrapy
 from scrapy.pipelines.images import ImagesPipeline
 import json
 from scrapy.exceptions import DropItem
+from MysqlHelper import MysqlHelper
 
 
 
@@ -44,6 +45,12 @@ class DouyuPipeline(object):
     def process_item(self, item, spider):
         text = json.dumps(dict(item), ensure_ascii=False) + "\n"
         self.filename.write(text.encode("utf-8"))
+
+        # helper = MysqlHelper()
+        # sql = 'insert into meizi(title,image_url,image_path,folder_name) values(%s,%s,%s,%s)'
+        # helper.insert(sql, [item['name'], item['image_urls'], item['image_paths'],item['page']])
+
+
         return item
 
     # def process_item(self, item, spider):

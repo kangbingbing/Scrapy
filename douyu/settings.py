@@ -52,7 +52,7 @@ COOKIES_ENABLED = False
 #    'douyu.middlewares.DouyuSpiderMiddleware': 543,
 # }
 
-IMAGES_STORE = "/Users/kangbing/Desktop/douyu/images"
+IMAGES_STORE = "/Users/rrkj/Desktop/Scrapy/images"
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
