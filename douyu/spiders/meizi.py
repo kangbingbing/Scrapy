@@ -3,6 +3,7 @@ import scrapy
 from douyu.items import DouyuItem
 import hashlib
 import re
+from douyu.MysqlHelper import MysqlHelper
 
 class MeiziSpider(scrapy.Spider):
     name = 'meizi'
@@ -38,6 +39,27 @@ class MeiziSpider(scrapy.Spider):
         hash_md5 = hashlib.md5(imagelink.encode('utf-8'))
         items['folder_name'] = str(page) + '/' + hash_md5.hexdigest()[-5:]
 
-        yield items
 
-        yield scrapy.Request("http://www.mmjpg.com/" + nextLink, callback=self.detail)
+        sql = "SELECT * FROM mm_mmitem WHERE image_url = %s"
+        helper = MysqlHelper()
+        result = helper.fetchall(sql,[imagelink])
+        self.log(result)
+
+
+        # 先检查类型
+        sql1 = "SELECT * FROM mm_mmtype WHERE id = %s"
+        helper1 = MysqlHelper()
+        result1 = helper1.fetchall(sql1,[int(page)])
+        if len(result1) == 0:
+            sql2 = 'insert into mm_mmtype(title,name,pic_url,pic_path,id) values(%s,%s,%s,%s,%s)'
+            helper2 = MysqlHelper()
+            filename = '/' + items['folder_name'] + '.jpg'
+            helper2.insert(sql2, [items['name'],'', items['image_urls'], filename,items['page']])
+
+
+        if len(result) == 0:
+            # 如果没有查询到之前的, 就继续, 否则就停止
+            yield items
+            yield scrapy.Request("http://www.mmjpg.com/" + nextLink, callback=self.detail)
+
+

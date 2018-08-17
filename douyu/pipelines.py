@@ -46,9 +46,9 @@ class DouyuPipeline(object):
         text = json.dumps(dict(item), ensure_ascii=False) + "\n"
         self.filename.write(text.encode("utf-8"))
 
-        # helper = MysqlHelper()
-        # sql = 'insert into meizi(title,image_url,image_path,folder_name) values(%s,%s,%s,%s)'
-        # helper.insert(sql, [item['name'], item['image_urls'], item['image_paths'],item['page']])
+        helper = MysqlHelper()
+        sql = 'insert into mm_mmitem(title,image_url,image_path,folder_name,mmtype_id) values(%s,%s,%s,%s,%s)'
+        helper.insert(sql, [item['name'], item['image_urls'], item['image_paths'],item['page'],item['page']])
 
 
         return item
